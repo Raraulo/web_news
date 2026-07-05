@@ -1,65 +1,109 @@
-import Image from "next/image";
+import { fetchNewsByCategory } from "@/lib/api";
+import { NewsCard } from "@/components/ui/NewsCard";
+import { LiveWeather } from "@/components/ui/LiveWeather";
+import { PopularMusic } from "@/components/ui/PopularMusic";
 
-export default function Home() {
+export default async function Home() {
+  const news = await fetchNewsByCategory("top", "Inicio");
+
+  const lead = news[0];           // Noticia principal — imagen grande
+  const secondary = news.slice(1, 4); // 3 secundarias en columna derecha
+  const row2 = news.slice(4, 8);      // Segunda fila: 4 artículos
+  const row3 = news.slice(8, 20);     // Tercera fila: resto
+
+  const today = new Date().toLocaleDateString("es-EC", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="container mx-auto px-4 py-8">
+      <LiveWeather />
+
+      <section className="mb-16">
+        {/* ── Encabezado ── */}
+        <div className="flex items-center justify-between border-b-2 border-black dark:border-white pb-2 mb-8">
+          <h1 className="text-2xl font-black tracking-tight" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+            Titulares
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+          <span className="font-sans text-[11px] uppercase tracking-widest text-black/40 dark:text-white/40">
+            {today}
+          </span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+
+        {/* ── FILA 1: Noticia principal + 3 secundarias ── */}
+        {lead && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border-b border-black/10 dark:border-white/10 pb-8 mb-8">
+            {/* Principal — 7 columnas */}
+            <div className="lg:col-span-7 lg:pr-8 lg:border-r border-black/10 dark:border-white/10">
+              <NewsCard article={lead} isFeatured />
+            </div>
+
+            {/* 3 secundarias en stack — 5 columnas */}
+            {secondary.length > 0 && (
+              <div className="lg:col-span-5 lg:pl-8 divide-y divide-black/10 dark:divide-white/10">
+                {secondary.map((article) => (
+                  <div key={article.id} className="py-5 first:pt-0 last:pb-0">
+                    <NewsCard article={article} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── FILA 2: 4 artículos en columnas iguales (NYT "4-pack") ── */}
+        {row2.length > 0 && (
+          <div className="border-b border-black/10 dark:border-white/10 pb-8 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-black/10 dark:divide-white/10">
+              {row2.map((article, i) => (
+                <div key={article.id} className={`${i === 0 ? "pr-0 sm:pr-6" : "px-0 sm:px-6"} py-6 sm:py-0`}>
+                  <NewsCard article={article} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── FILA 3: 3 columnas tipo "continuation" (NYT estilo) ── */}
+        {row3.length > 0 && (
+          <>
+            <div className="font-sans text-[11px] font-bold uppercase tracking-widest text-black/40 dark:text-white/40 mb-6 border-b border-black/10 dark:border-white/10 pb-2">
+              Más noticias
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-black/10 dark:divide-white/10">
+              {/* Columna A */}
+              <div className="md:pr-8 divide-y divide-black/10 dark:divide-white/10">
+                {row3.filter((_, i) => i % 3 === 0).map((article) => (
+                  <div key={article.id} className="py-6 first:pt-0">
+                    <NewsCard article={article} />
+                  </div>
+                ))}
+              </div>
+              {/* Columna B */}
+              <div className="md:px-8 divide-y divide-black/10 dark:divide-white/10 pt-6 md:pt-0">
+                {row3.filter((_, i) => i % 3 === 1).map((article) => (
+                  <div key={article.id} className="py-6 first:pt-0">
+                    <NewsCard article={article} />
+                  </div>
+                ))}
+              </div>
+              {/* Columna C */}
+              <div className="md:pl-8 divide-y divide-black/10 dark:divide-white/10 pt-6 md:pt-0">
+                {row3.filter((_, i) => i % 3 === 2).map((article) => (
+                  <div key={article.id} className="py-6 first:pt-0">
+                    <NewsCard article={article} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        <PopularMusic />
+      </section>
     </div>
   );
 }

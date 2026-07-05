@@ -237,9 +237,8 @@ export function PopularMusic() {
                       "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=900&q=80"
                     }
                     alt={`${visibleTrack?.title ?? "Canción"} cover`}
-                    className={`h-[360px] w-full rounded-[1.2rem] object-cover sm:h-[460px] animate-slow-zoom ${
-                      isVisibleTrackPlaying ? "" : "animate-slow-zoom-paused"
-                    }`}
+                    className={`h-[360px] w-full rounded-[1.2rem] object-cover sm:h-[460px] animate-slow-zoom ${isVisibleTrackPlaying ? "" : "animate-slow-zoom-paused"
+                      }`}
                   />
                 </div>
                 <div className="absolute inset-0 flex items-end rounded-[1.2rem] bg-gradient-to-t from-black/70 via-black/20 to-transparent p-4 sm:p-6">
@@ -270,10 +269,13 @@ export function PopularMusic() {
             <div className="flex-1">
               <div className="mb-4 flex items-center justify-between">
                 <div>
-                  <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-black/40 dark:text-white/40">
+                  {/* Antes era <p>, pero contiene <EqualizerBars> que renderiza un <div>.
+                      Un <div> no puede ir dentro de un <p> en HTML válido, así que este
+                      contenedor pasa a ser <div> (no necesitaba ser un párrafo semántico). */}
+                  <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-black/40 dark:text-white/40">
                     Reproduciendo ahora
                     {isVisibleTrackPlaying && <EqualizerBars active />}
-                  </p>
+                  </div>
                   <p className="text-lg font-semibold">{visibleTrack?.title}</p>
                 </div>
                 <div className="flex gap-2">
@@ -312,11 +314,10 @@ export function PopularMusic() {
                         togglePlayback(track);
                       }}
                       style={{ animationDelay: `${index * 0.05}s` }}
-                      className={`animate-list-item flex items-center gap-3 rounded-2xl border p-3 text-left transition-all duration-300 ${
-                        isVisible
+                      className={`animate-list-item flex items-center gap-3 rounded-2xl border p-3 text-left transition-all duration-300 ${isVisible
                           ? "border-black/20 bg-black text-white scale-[1.02] shadow-md dark:border-white/20 dark:bg-white dark:text-black"
                           : "border-black/10 bg-white/70 hover:scale-[1.01] hover:border-black/20 dark:border-white/10 dark:bg-white/5 dark:hover:border-white/20"
-                      }`}
+                        }`}
                     >
                       <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-black/5 text-black/40 dark:bg-white/10 dark:text-white/40">
                         {track.cover ? (

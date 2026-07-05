@@ -2,12 +2,20 @@ import { fetchNewsByCategory } from "@/lib/api";
 import { NewsCard } from "@/components/ui/NewsCard";
 import { notFound } from "next/navigation";
 
-const CATEGORIES_MAP: Record<string, { apiCat: string; label: string }> = {
+const CATEGORIES_MAP: Record<string, { apiCat: string; label: string; keywords?: string }> = {
   tecnologia: { apiCat: "technology", label: "Tecnología" },
   deportes: { apiCat: "sports", label: "Deportes" },
   cocina: { apiCat: "food", label: "Cocina y Salud" },
   clima: { apiCat: "science", label: "Clima y Ciencia" },
   moda: { apiCat: "entertainment", label: "Moda y Entretenimiento" },
+  // Nueva categoría: newsdata.io no tiene "cine" o "música" como categorías propias,
+  // así que reutilizamos "entertainment" pero afinamos con keywords para que salgan
+  // resultados de cine/música en vez de moda/celebridades genéricas.
+  "cine-musica": {
+    apiCat: "entertainment",
+    label: "Cine y Música",
+    keywords: "cine OR película OR música OR concierto OR álbum OR estreno",
+  },
 };
 
 export function generateStaticParams() {
@@ -20,12 +28,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
 
   if (!config) notFound();
 
-  const news = await fetchNewsByCategory(config.apiCat, config.label);
+  const news = await fetchNewsByCategory(config.apiCat, config.label, config.keywords);
 
   const lead = news[0];
-  const secondary = news.slice(1, 4);
-  const row2 = news.slice(4, 8);
-  const row3 = news.slice(8);
+  const rightGrid = news.slice(1, 5);
+  const row2 = news.slice(5, 9);
+  const row3 = news.slice(9);
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -47,18 +55,23 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
           <p className="font-sans text-black/50 dark:text-white/50">No hay noticias en esta categoría aún.</p>
         ) : (
           <>
-            {/* FILA 1: Principal (7 cols) + 3 secundarias (5 cols) */}
+            {/* FILA 1: Noticia principal + 4 secundarias */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border-b border-black/10 dark:border-white/10 pb-8 mb-8">
+              {/* Principal — 7 columnas */}
               <div className="lg:col-span-7 lg:pr-8 lg:border-r border-black/10 dark:border-white/10">
                 <NewsCard article={lead} isFeatured />
               </div>
-              {secondary.length > 0 && (
-                <div className="lg:col-span-5 lg:pl-8 divide-y divide-black/10 dark:divide-white/10">
-                  {secondary.map((article) => (
-                    <div key={article.id} className="py-5 first:pt-0 last:pb-0">
-                      <NewsCard article={article} />
-                    </div>
-                  ))}
+
+              {/* 4 secundarias en grid 2x2 — 5 columnas */}
+              {rightGrid.length > 0 && (
+                <div className="lg:col-span-5 lg:pl-8">
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-8">
+                    {rightGrid.map((article) => (
+                      <div key={article.id}>
+                        <NewsCard article={article} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

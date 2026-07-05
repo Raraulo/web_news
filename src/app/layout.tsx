@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SportsTicker } from "@/components/ui/SportsTicker";
+import { IntroAnimation } from "@/components/IntroAnimation";
 
 // Fuente principal serif — estilo NYT/Times
 const playfair = Playfair_Display({
@@ -43,6 +44,7 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning className={`${playfair.variable} ${garamond.variable} ${inter.variable}`}>
       <body className="min-h-screen flex flex-col antialiased bg-white dark:bg-black text-black dark:text-white">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
+          <IntroAnimation />
           <Navbar />
           <SportsTicker />
           <main className="flex-1">

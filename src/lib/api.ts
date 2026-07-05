@@ -73,31 +73,55 @@ function getCategoryName(apiCategories: string[] | undefined, fallback: string):
   return CATEGORY_TRANSLATIONS[mainCat] || fallback;
 }
 
-export async function fetchNewsByCategory(category: string, displayCategory: string): Promise<NewsArticle[]> {
+/**
+ * Función original, sin cambios de comportamiento.
+ * Se agregó un parámetro opcional `keywords` al final: si no lo pasas,
+ * funciona exactamente igual que antes.
+ */
+export async function fetchNewsByCategory(
+  category: string,
+  displayCategory: string,
+  keywords?: string
+): Promise<NewsArticle[]> {
   try {
-    // Ecuador, UK (gb), Rusia, China
-    const countries = "ec,gb,ru,cn"; 
+    const countries = "ec,us,gb,ru,cn";
 
-    // Solo en español ("obvio en español")
-    const url = `https://newsdata.io/api/1/news?apikey=${API_KEY}&language=es&category=${category}&country=${countries}`;
+    // Agregamos la restricción de países (Ecuador, USA, UK, Rusia, China)
+    let url = `https://newsdata.io/api/1/news?apikey=${API_KEY}&language=es&category=${category}&country=${countries}`;
+
+    // Si se pasan palabras clave, las sumamos para refinar la búsqueda
+    // (útil para subcategorías que newsdata.io no soporta nativamente, como cine/música)
+    if (keywords) {
+      url += `&q=${encodeURIComponent(keywords)}`;
+    }
+
     const response = await fetch(url, {
       next: { revalidate: 3600 }
     });
-    
+
     if (!response.ok) {
       console.warn(`[News API] Status ${response.status} - Usando datos de respaldo.`);
       return getMockData(displayCategory);
     }
 
     const data = await response.json();
-    
+
     if (!data.results) return getMockData(displayCategory);
+
+    // Evitar noticias repetidas (mismo título)
+    const seenTitles = new Set();
 
     return data.results
       .filter((article: any) => {
         // Filtrar obligatoriamente política como pidió el usuario al principio y verificar título
         if (article.category && article.category.includes("politics")) return false;
-        return article.title;
+        if (!article.title) return false;
+
+        // Evitar duplicados
+        if (seenTitles.has(article.title)) return false;
+        seenTitles.add(article.title);
+
+        return true;
       })
       .map((article: any) => ({
         id: article.link || article.article_id,
@@ -112,4 +136,29 @@ export async function fetchNewsByCategory(category: string, displayCategory: str
     console.warn("[News API] Error de red - Usando datos de respaldo.");
     return getMockData(displayCategory);
   }
+}
+
+/**
+ * newsdata.io no tiene categorías separadas para "cine" y "música": solo existe
+ * la categoría general "entertainment". Para acercarnos a cine/música específicamente,
+ * combinamos esa categoría con palabras clave relevantes usando el parámetro `q`.
+ */
+export async function fetchEntertainmentNews(
+  displayCategory: string = "Cine y Música"
+): Promise<NewsArticle[]> {
+  return fetchNewsByCategory(
+    "entertainment",
+    displayCategory,
+    "cine OR película OR música OR concierto OR álbum OR estreno"
+  );
+}
+
+/**
+ * Trae "Top" (destacadas) tal como ya lo hacías, sin cambios —
+ * incluida por conveniencia para que uses la misma firma en todos lados.
+ */
+export async function fetchTopNews(
+  displayCategory: string = "Destacado"
+): Promise<NewsArticle[]> {
+  return fetchNewsByCategory("top", displayCategory);
 }

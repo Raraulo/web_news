@@ -2,14 +2,16 @@ import { fetchNewsByCategory } from "@/lib/api";
 import { NewsCard } from "@/components/ui/NewsCard";
 import { LiveWeather } from "@/components/ui/LiveWeather";
 import { PopularMusic } from "@/components/ui/PopularMusic";
+import { YouTubeVideoGrid } from "@/components/ui/YouTubeVideoGrid";
+import { StockMarket } from "@/components/ui/StockMarket";
 
 export default async function Home() {
   const news = await fetchNewsByCategory("top", "Inicio");
 
   const lead = news[0];           // Noticia principal — imagen grande
-  const secondary = news.slice(1, 4); // 3 secundarias en columna derecha
-  const row2 = news.slice(4, 8);      // Segunda fila: 4 artículos
-  const row3 = news.slice(8, 20);     // Tercera fila: resto
+  const rightGrid = news.slice(1, 5); // 4 secundarias en grid 2x2
+  const row2 = news.slice(5, 9);      // Segunda fila: 4 artículos
+  const row3 = news.slice(9, 20);     // Tercera fila: resto
 
   const today = new Date().toLocaleDateString("es-EC", {
     weekday: "long",
@@ -28,12 +30,9 @@ export default async function Home() {
           <h1 className="text-2xl font-black tracking-tight" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
             Titulares
           </h1>
-          <span className="font-sans text-[11px] uppercase tracking-widest text-black/40 dark:text-white/40">
-            {today}
-          </span>
         </div>
 
-        {/* ── FILA 1: Noticia principal + 3 secundarias ── */}
+        {/* ── FILA 1: Noticia principal + 4 secundarias ── */}
         {lead && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border-b border-black/10 dark:border-white/10 pb-8 mb-8">
             {/* Principal — 7 columnas */}
@@ -41,18 +40,23 @@ export default async function Home() {
               <NewsCard article={lead} isFeatured />
             </div>
 
-            {/* 3 secundarias en stack — 5 columnas */}
-            {secondary.length > 0 && (
-              <div className="lg:col-span-5 lg:pl-8 divide-y divide-black/10 dark:divide-white/10">
-                {secondary.map((article) => (
-                  <div key={article.id} className="py-5 first:pt-0 last:pb-0">
-                    <NewsCard article={article} />
-                  </div>
-                ))}
+            {/* 4 secundarias en grid 2x2 — 5 columnas */}
+            {rightGrid.length > 0 && (
+              <div className="lg:col-span-5 lg:pl-8">
+                <div className="grid grid-cols-2 gap-x-6 gap-y-8">
+                  {rightGrid.map((article) => (
+                    <div key={article.id}>
+                      <NewsCard article={article} />
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
         )}
+
+        {/* ── SECCIÓN DE VIDEO CON YOUTUBE API ── */}
+        <YouTubeVideoGrid />
 
         {/* ── FILA 2: 4 artículos en columnas iguales (NYT "4-pack") ── */}
         {row2.length > 0 && (
@@ -102,6 +106,7 @@ export default async function Home() {
           </>
         )}
 
+        <StockMarket />
         <PopularMusic />
       </section>
     </div>

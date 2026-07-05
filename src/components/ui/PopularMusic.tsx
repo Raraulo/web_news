@@ -136,6 +136,11 @@ export function PopularMusic() {
 
   const visibleTrack = tracks[currentIndex] ?? activeTrack ?? tracks[0];
 
+  const isVisibleTrackPlaying =
+    isPlaying &&
+    activeTrack?.title === visibleTrack?.title &&
+    activeTrack?.artist === visibleTrack?.artist;
+
   const goToPrevious = () => {
     const nextIndex = currentIndex === 0 ? tracks.length - 1 : currentIndex - 1;
     setCurrentIndex(nextIndex);
@@ -182,6 +187,17 @@ export function PopularMusic() {
         .animate-pulse-ring {
           animation: pulse-ring 1.8s ease-out infinite;
         }
+        /* Zoom lento y continuo estilo "Ken Burns", como YouTube Music */
+        @keyframes slow-zoom {
+          0% { transform: scale(1); }
+          100% { transform: scale(1.12); }
+        }
+        .animate-slow-zoom {
+          animation: slow-zoom 18s ease-in-out infinite alternate;
+        }
+        .animate-slow-zoom-paused {
+          animation-play-state: paused;
+        }
       `}</style>
 
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -214,14 +230,16 @@ export function PopularMusic() {
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
             <div className="w-full lg:w-[38%]">
               <div className="relative overflow-hidden rounded-[1.5rem] border border-black/10 bg-black/5 p-2 dark:border-white/10 dark:bg-white/10">
-                <div key={currentIndex} className="animate-cover-in">
+                <div key={currentIndex} className="animate-cover-in overflow-hidden rounded-[1.2rem]">
                   <img
                     src={
                       visibleTrack?.cover ||
                       "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=900&q=80"
                     }
                     alt={`${visibleTrack?.title ?? "Canción"} cover`}
-                    className="h-[360px] w-full rounded-[1.2rem] object-cover transition-transform duration-700 hover:scale-105 sm:h-[460px]"
+                    className={`h-[360px] w-full rounded-[1.2rem] object-cover sm:h-[460px] animate-slow-zoom ${
+                      isVisibleTrackPlaying ? "" : "animate-slow-zoom-paused"
+                    }`}
                   />
                 </div>
                 <div className="absolute inset-0 flex items-end rounded-[1.2rem] bg-gradient-to-t from-black/70 via-black/20 to-transparent p-4 sm:p-6">
@@ -243,11 +261,7 @@ export function PopularMusic() {
                 <div
                   className="h-full rounded-full bg-black transition-[width] duration-150 ease-linear dark:bg-white"
                   style={{
-                    width: `${
-                      activeTrack?.title === visibleTrack?.title && activeTrack?.artist === visibleTrack?.artist
-                        ? progress
-                        : 0
-                    }%`,
+                    width: `${isVisibleTrackPlaying || progress > 0 ? progress : 0}%`,
                   }}
                 />
               </div>
@@ -258,9 +272,7 @@ export function PopularMusic() {
                 <div>
                   <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-black/40 dark:text-white/40">
                     Reproduciendo ahora
-                    {isPlaying &&
-                      activeTrack?.title === visibleTrack?.title &&
-                      activeTrack?.artist === visibleTrack?.artist && <EqualizerBars active />}
+                    {isVisibleTrackPlaying && <EqualizerBars active />}
                   </p>
                   <p className="text-lg font-semibold">{visibleTrack?.title}</p>
                 </div>

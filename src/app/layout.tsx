@@ -42,7 +42,7 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning className={`${playfair.variable} ${garamond.variable} ${inter.variable}`}>
       <body className="min-h-screen flex flex-col antialiased bg-white dark:bg-black text-black dark:text-white">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
           <Navbar />
           <SportsTicker />
           <main className="flex-1">

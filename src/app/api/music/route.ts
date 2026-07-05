@@ -19,9 +19,9 @@ const SEARCH_QUERIES = [
   "Birds of a Feather Billie Eilish",
   "Espresso Sabrina Carpenter",
   "Cruel Summer Taylor Swift",
-  "Flowers Miley Cyrus",
-  "As It Was Harry Styles",
-  "Heat Waves Glass Animals",
+  "Fuerza Regida TQM",
+  "Python GOT7",
+  "Doping Jossimar",
   "Blinding Lights The Weeknd",
 ];
 

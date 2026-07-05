@@ -57,26 +57,6 @@ export function LiveWeather() {
     const loadWeather = async () => {
       try {
         await fetchWeather(DEFAULT_LAT, DEFAULT_LON, DEFAULT_CITY);
-
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(
-            async (pos) => {
-              try {
-                const { latitude, longitude } = pos.coords;
-                const geoRes = await fetch(
-                  `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=es`
-                );
-                const geoData = await geoRes.json();
-                const city = geoData.city || geoData.locality || DEFAULT_CITY;
-                await fetchWeather(latitude, longitude, city);
-              } catch {
-                // mantiene Quito
-              }
-            },
-            () => {},
-            { timeout: 5000, maximumAge: 300000 }
-          );
-        }
       } catch {
         setError(true);
       }

@@ -2,11 +2,19 @@ import { fetchNewsByCategory } from "@/lib/api";
 import { NewsCard } from "@/components/ui/NewsCard";
 import { notFound } from "next/navigation";
 
-const CATEGORIES_MAP: Record<string, { apiCat: string; label: string; keywords?: string }> = {
+const CATEGORIES_MAP: Record<string, { apiCat: string | string[]; label: string; keywords?: string }> = {
   tecnologia: { apiCat: "technology", label: "Tecnología" },
   deportes: { apiCat: "sports", label: "Deportes" },
-  cocina: { apiCat: "food", label: "Cocina y Salud" },
-  clima: { apiCat: "science", label: "Clima y Ciencia" },
+  cocina: {
+    apiCat: "food",
+    label: "Cocina y Salud",
+    keywords: "receta OR gastronomía OR chef OR restaurante OR cocina OR comida OR saludable OR nutrición OR dieta",
+  },
+  clima: {
+    apiCat: ["science", "environment"],
+    label: "Clima y Ciencia",
+    keywords: "clima OR meteorología OR tiempo OR temperatura OR huracán OR ciclón OR sequía OR tormenta OR inundación OR sostenibilidad OR cambio climático",
+  },
   moda: { apiCat: "entertainment", label: "Moda y Entretenimiento" },
   // Nueva categoría: newsdata.io no tiene "cine" o "música" como categorías propias,
   // así que reutilizamos "entertainment" pero afinamos con keywords para que salgan

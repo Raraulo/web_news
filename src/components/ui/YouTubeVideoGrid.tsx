@@ -269,3 +269,237 @@ export function YouTubeVideoGrid() {
     </div>
   );
 }
+// =================================================================
+// The Metropolitan Museum of Art — Collection API
+// Imagen grande a la izquierda con efecto Ken Burns, ficha editorial a la derecha
+// Docs: https://metmuseum.github.io/
+// =================================================================
+
+interface MetObject {
+  objectID: number;
+  title: string;
+  artistDisplayName: string;
+  objectDate: string;
+  medium: string;
+  department: string;
+  primaryImage: string;
+  creditLine: string;
+  objectURL: string;
+}
+
+const MET_SEARCH_URL =
+  "https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=painting";
+const MET_OBJECT_URL = "https://collectionapi.metmuseum.org/public/collection/v1/objects";
+
+async function fetchRandomMetObject(attempts = 6): Promise<MetObject | null> {
+  try {
+    const searchRes = await fetch(MET_SEARCH_URL);
+    const searchData = await searchRes.json();
+    const ids: number[] = searchData.objectIDs ?? [];
+    if (ids.length === 0) return null;
+
+    for (let i = 0; i < attempts; i++) {
+      const randomId = ids[Math.floor(Math.random() * ids.length)];
+      const objRes = await fetch(`${MET_OBJECT_URL}/${randomId}`);
+      if (!objRes.ok) continue;
+      const obj: MetObject = await objRes.json();
+      if (obj.primaryImage) return obj;
+    }
+    return null;
+  } catch (e) {
+    console.error("Error cargando obra del Met", e);
+    return null;
+  }
+}
+
+function ArrowIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="w-3.5 h-3.5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M7 17L17 7" />
+      <path d="M7 7h10v10" />
+    </svg>
+  );
+}
+
+export function MetMuseumHighlight() {
+  const [artwork, setArtwork] = useState<MetObject | null>(null);
+  const [loading, setLoading] = useState(true);
+  // Primero mostramos la obra completa, sin recortar (object-contain).
+  // Recién después de un momento pasamos al modo Ken Burns (object-cover + zoom).
+  const [kenBurnsActive, setKenBurnsActive] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchRandomMetObject().then((obj) => {
+      if (!cancelled) {
+        setArtwork(obj);
+        setLoading(false);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!artwork) return;
+    setKenBurnsActive(false);
+    // Le damos tiempo al usuario de ver la obra completa antes de animar
+    const timer = setTimeout(() => setKenBurnsActive(true), 2200);
+    return () => clearTimeout(timer);
+  }, [artwork]);
+
+  if (loading) {
+    return (
+      <div className="mb-16 flex flex-col md:flex-row gap-10 animate-pulse">
+        <div className="w-full md:w-3/5 aspect-[4/5] bg-black/10 dark:bg-white/10 rounded-xl" />
+        <div className="w-full md:w-2/5 space-y-4 pt-4">
+          <div className="h-3 w-1/3 bg-black/10 dark:bg-white/10 rounded" />
+          <div className="h-9 w-3/4 bg-black/10 dark:bg-white/10 rounded" />
+          <div className="h-5 w-1/2 bg-black/10 dark:bg-white/10 rounded" />
+          <div className="h-4 w-1/4 bg-black/10 dark:bg-white/10 rounded" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!artwork) {
+    return null;
+  }
+
+  return (
+    <div className="mb-16">
+      {/* Encabezado de sección con línea editorial, igual patrón que "Más noticias" */}
+      <div className="flex items-center justify-between border-b-2 border-black dark:border-white pb-2 mb-8">
+        <h2
+          className="text-2xl font-black tracking-tight"
+          style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+        >
+          Arte
+        </h2>
+        <span className="text-[11px] font-bold uppercase tracking-widest text-black/40 dark:text-white/40">
+          The Metropolitan Museum of Art
+        </span>
+      </div>
+
+      <div className="flex flex-col md:flex-row gap-10 items-stretch">
+        {/* Imagen grande con efecto Ken Burns: zoom lento in/out en loop */}
+        <a
+          href={artwork.objectURL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative w-full md:w-3/5 shrink-0 overflow-hidden rounded-xl border border-black/10 dark:border-white/10 shadow-md bg-black/5 dark:bg-white/5"
+        >
+          <div className="relative w-full aspect-[4/5] md:aspect-[16/11] overflow-hidden bg-black/5 dark:bg-white/5">
+            {/* Paso 1: la obra completa, tal cual viene de la API, sin recortar */}
+            <img
+              src={artwork.primaryImage}
+              alt={artwork.title || "Obra del Met"}
+              className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-[1200ms] ease-in-out ${kenBurnsActive ? "opacity-0" : "opacity-100"
+                }`}
+            />
+            {/* Paso 2: recién después de mostrarla completa, pasamos al Ken Burns
+                (solo escala, sin traslación, para que nunca se asomen bordes vacíos) */}
+            <img
+              src={artwork.primaryImage}
+              alt={artwork.title || "Obra del Met"}
+              className={`met-kenburns absolute inset-0 w-full h-full object-cover transition-opacity duration-[1200ms] ease-in-out ${kenBurnsActive ? "opacity-100" : "opacity-0"
+                }`}
+              style={{ animationPlayState: kenBurnsActive ? "running" : "paused" }}
+            />
+            {/* Degradado inferior para legibilidad si se superpone texto en móvil */}
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
+          </div>
+
+          {/* Overlay de acción, aparece sutil al hover */}
+          <div className="absolute bottom-4 right-4 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-white bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Ver en The Met
+            <ArrowIcon />
+          </div>
+        </a>
+
+        {/* Ficha editorial a la derecha */}
+        <div className="w-full md:w-2/5 flex flex-col justify-center py-2">
+          {artwork.department && (
+            <span className="inline-block w-fit text-[11px] font-bold uppercase tracking-[0.2em] text-red-600 dark:text-red-500 mb-3">
+              {artwork.department}
+            </span>
+          )}
+
+          <h3
+            className="text-3xl md:text-[2.15rem] font-black leading-[1.1] mb-3 text-black dark:text-white"
+            style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+          >
+            {artwork.title || "Sin título"}
+          </h3>
+
+          <p
+            className="text-lg text-black/75 dark:text-white/75 mb-1 italic"
+            style={{ fontFamily: "var(--font-garamond), Georgia, serif" }}
+          >
+            {artwork.artistDisplayName || "Artista desconocido"}
+          </p>
+
+          <p className="text-sm font-semibold text-black/50 dark:text-white/50 mb-6 tracking-wide">
+            {artwork.objectDate}
+          </p>
+
+          <div className="border-t border-black/10 dark:border-white/10 pt-5 space-y-2">
+            {artwork.medium && (
+              <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
+                <span className="font-semibold text-black/40 dark:text-white/40 uppercase text-[10px] tracking-wider block mb-1">
+                  Técnica
+                </span>
+                {artwork.medium}
+              </p>
+            )}
+            {artwork.creditLine && (
+              <p className="text-xs text-black/40 dark:text-white/40 italic leading-relaxed pt-2">
+                {artwork.creditLine}
+              </p>
+            )}
+          </div>
+
+          <a
+            href={artwork.objectURL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-flex items-center gap-2 w-fit text-sm font-semibold text-black dark:text-white border-b-2 border-black dark:border-white pb-0.5 hover:gap-3 transition-all duration-200"
+          >
+            Explorar la colección
+            <ArrowIcon />
+          </a>
+        </div>
+      </div>
+
+      {/* Animación Ken Burns: zoom lento hacia adentro y hacia afuera en loop, como YouTube Music */}
+      <style jsx global>{`
+        @keyframes met-kenburns-anim {
+          0% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.08);
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
+        .met-kenburns {
+          transform-origin: center center;
+          animation: met-kenburns-anim 18s ease-in-out infinite;
+          animation-play-state: paused;
+          will-change: transform;
+        }
+      `}</style>
+    </div>
+  );
+}

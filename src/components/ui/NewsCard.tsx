@@ -33,41 +33,54 @@ export function NewsCard({ article, isFeatured = false }: NewsCardProps) {
   const displayImage = article.imageUrl || FALLBACK_IMAGE;
 
   return (
-    <article className="group relative flex flex-col h-full" style={{ fontFamily: "var(--font-garamond), Georgia, serif" }}>
-      {/* Imagen */}
-      <div className="relative w-full overflow-hidden bg-zinc-200 dark:bg-zinc-900 mb-3">
+    <article
+      className="group relative flex flex-col h-full"
+      style={{ fontFamily: "var(--font-garamond), Georgia, serif" }}
+    >
+      {/* Imagen: esquinas redondeadas + borde sutil + sombra al hover */}
+      <div className="relative w-full overflow-hidden rounded-md bg-zinc-200 dark:bg-zinc-900 mb-3 border border-black/10 dark:border-white/10 shadow-sm group-hover:shadow-md transition-shadow duration-300">
         <img
           src={displayImage}
           alt={article.title}
           loading="lazy"
-          className={`${imgClass} group-hover:scale-[1.02] transition-transform duration-500 ease-out`}
+          className={`${imgClass} group-hover:scale-[1.03] transition-transform duration-500 ease-out`}
         />
+        {/* Leve degradado inferior para que la imagen no quede "pelada" contra el fondo */}
+        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
       </div>
 
       {/* Contenido */}
       <div className="flex flex-col flex-1">
-        {/* Categoría — estilo NYT rojo serif */}
-        <span className="text-[11px] font-bold uppercase tracking-widest text-red-600 dark:text-red-500 mb-2" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+        <span
+          className="text-[11px] font-bold uppercase tracking-widest text-red-600 dark:text-red-500 mb-2"
+          style={{ fontFamily: "var(--font-inter), sans-serif" }}
+        >
           {article.category}
         </span>
 
-        {/* Título — Playfair Display */}
-        <h3 className={`${titleClass} group-hover:underline decoration-1 underline-offset-4 text-black dark:text-white`} style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+        <h3
+          className={`${titleClass} group-hover:underline decoration-1 underline-offset-4 text-black dark:text-white`}
+          style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+        >
           <a href={article.id} target="_blank" rel="noopener noreferrer">
             {article.title}
             <span className="absolute inset-0" />
           </a>
         </h3>
 
-        {/* Extracto — EB Garamond */}
         {article.excerpt && (
-          <p className={`text-black/65 dark:text-white/60 mb-4 flex-1 ${clampClass}`} style={{ fontFamily: "var(--font-garamond), Georgia, serif" }}>
+          <p
+            className={`text-black/65 dark:text-white/60 mb-4 flex-1 ${clampClass}`}
+            style={{ fontFamily: "var(--font-garamond), Georgia, serif" }}
+          >
             {article.excerpt}
           </p>
         )}
 
-        {/* Footer — Inter */}
-        <div className="flex items-center justify-between text-xs text-black/40 dark:text-white/40 mt-auto pt-3 border-t border-black/10 dark:border-white/10" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+        <div
+          className="flex items-center justify-between text-xs text-black/40 dark:text-white/40 mt-auto pt-3 border-t border-black/10 dark:border-white/10"
+          style={{ fontFamily: "var(--font-inter), sans-serif" }}
+        >
           <span className="font-semibold uppercase tracking-wide truncate max-w-[150px]">
             {article.author}
           </span>

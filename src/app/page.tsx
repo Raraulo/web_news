@@ -3,6 +3,7 @@ import { NewsCard } from "@/components/ui/NewsCard";
 import { LiveWeather } from "@/components/ui/LiveWeather";
 import { PopularMusic } from "@/components/ui/PopularMusic";
 import { YouTubeVideoGrid } from "@/components/ui/YouTubeVideoGrid";
+import { MetMuseumHighlight } from "@/components/ui/YouTubeVideoGrid"; // <-- agregar
 import { StockMarket } from "@/components/ui/StockMarket";
 
 export default async function Home() {
@@ -57,19 +58,20 @@ export default async function Home() {
 
         {/* ── SECCIÓN DE VIDEO CON YOUTUBE API ── */}
         <YouTubeVideoGrid />
-
+{/* ── OBRA DESTACADA — THE MET ── */}
+<MetMuseumHighlight />
         {/* ── FILA 2: 4 artículos en columnas iguales (NYT "4-pack") ── */}
-        {row2.length > 0 && (
-          <div className="border-b border-black/10 dark:border-white/10 pb-8 mb-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-black/10 dark:divide-white/10">
-              {row2.map((article, i) => (
-                <div key={article.id} className={`${i === 0 ? "pr-0 sm:pr-6" : "px-0 sm:px-6"} py-6 sm:py-0`}>
-                  <NewsCard article={article} />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+   {row2.length > 0 && (
+  <div className="border-b border-black/10 dark:border-white/10 pb-8 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-8">
+      {row2.map((article) => (
+        <div key={article.id}>
+          <NewsCard article={article} />
+        </div>
+      ))}
+    </div>
+  </div>
+)}
 
         {/* ── FILA 3: 3 columnas tipo "continuation" (NYT estilo) ── */}
         {row3.length > 0 && (

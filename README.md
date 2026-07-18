@@ -14,10 +14,15 @@
   <img src="https://img.shields.io/badge/Vercel-Deployment-black?logo=vercel" alt="Vercel">
 </p>
 
+
+
 ---
 
+# Overview
 
+The Quito Grid is a modern digital newspaper built with **Next.js**. The application aggregates news from external sources and presents them through an editorial interface inspired by professional online newspapers. In addition to news articles, it integrates weather forecasts, financial market information, sports events, multimedia content and a fully responsive user experience.
 
+---
 
 
 ## Table of Contents

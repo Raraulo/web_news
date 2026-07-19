@@ -37,8 +37,8 @@ export function NewsCard({ article, isFeatured = false }: NewsCardProps) {
       className="group relative flex flex-col h-full"
       style={{ fontFamily: "var(--font-garamond), Georgia, serif" }}
     >
-      {/* Imagen: esquinas redondeadas + borde sutil + sombra al hover */}
-      <div className="relative w-full overflow-hidden rounded-md bg-zinc-200 dark:bg-zinc-900 mb-3 border border-black/10 dark:border-white/10 shadow-sm group-hover:shadow-md transition-shadow duration-300">
+      {/* Imagen: bordes rectos + sin borde ni sombra */}
+      <div className="relative w-full overflow-hidden bg-zinc-200 dark:bg-zinc-900 mb-3 transition-shadow duration-300">
         <img
           src={displayImage}
           alt={article.title}

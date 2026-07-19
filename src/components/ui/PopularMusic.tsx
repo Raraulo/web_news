@@ -213,35 +213,35 @@ export function PopularMusic() {
           </h2>
         </div>
         <div className="rounded-full border border-black/10 px-3 py-1 text-[11px] uppercase tracking-[0.25em] text-black/50 dark:border-white/10 dark:text-white/50">
-          Preview de 30s
+          Deezer
         </div>
       </div>
 
       {loading ? (
-        <div className="rounded-[2rem] border border-black/10 p-8 text-sm text-black/60 dark:border-white/10 dark:text-white/60 animate-pulse">
+        <div className="p-8 text-sm text-black/60 dark:text-white/60 animate-pulse">
           Cargando canciones...
         </div>
       ) : tracks.length === 0 ? (
-        <div className="rounded-[2rem] border border-black/10 p-8 text-sm text-black/60 dark:border-white/10 dark:text-white/60">
+        <div className="p-8 text-sm text-black/60 dark:text-white/60">
           No hay canciones disponibles por ahora.
         </div>
       ) : (
-        <div className="rounded-[2rem] border border-black/10 bg-gradient-to-br from-white via-white to-black/[0.03] p-4 shadow-sm dark:border-white/10 dark:from-white/5 dark:via-white/5 dark:to-black/20 sm:p-6 transition-shadow duration-500">
+        <div>
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
             <div className="w-full lg:w-[38%]">
-              <div className="relative overflow-hidden rounded-[1.5rem] border border-black/10 bg-black/5 p-2 dark:border-white/10 dark:bg-white/10">
-                <div key={currentIndex} className="animate-cover-in overflow-hidden rounded-[1.2rem]">
+              <div className="relative overflow-hidden">
+                <div key={currentIndex} className="animate-cover-in overflow-hidden">
                   <img
                     src={
                       visibleTrack?.cover ||
                       "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=900&q=80"
                     }
                     alt={`${visibleTrack?.title ?? "Canción"} cover`}
-                    className={`h-[360px] w-full rounded-[1.2rem] object-cover sm:h-[460px] animate-slow-zoom ${isVisibleTrackPlaying ? "" : "animate-slow-zoom-paused"
+                    className={`aspect-square w-full object-cover animate-slow-zoom ${isVisibleTrackPlaying ? "" : "animate-slow-zoom-paused"
                       }`}
                   />
                 </div>
-                <div className="absolute inset-0 flex items-end rounded-[1.2rem] bg-gradient-to-t from-black/70 via-black/20 to-transparent p-4 sm:p-6">
+                <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 via-black/20 to-transparent p-4 sm:p-6">
                   <div className="text-white">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-white/70">
                       #{visibleTrack?.position ?? 1}
@@ -256,9 +256,9 @@ export function PopularMusic() {
               </div>
 
               {/* Barra de progreso sincronizada con el audio */}
-              <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
+              <div className="mt-3 h-1 w-full overflow-hidden bg-black/10 dark:bg-white/10">
                 <div
-                  className="h-full rounded-full bg-black transition-[width] duration-150 ease-linear dark:bg-white"
+                  className="h-full bg-black transition-[width] duration-150 ease-linear dark:bg-white"
                   style={{
                     width: `${isVisibleTrackPlaying || progress > 0 ? progress : 0}%`,
                   }}
@@ -314,19 +314,16 @@ export function PopularMusic() {
                         togglePlayback(track);
                       }}
                       style={{ animationDelay: `${index * 0.05}s` }}
-                      className={`animate-list-item flex items-center gap-3 rounded-2xl border p-3 text-left transition-all duration-300 ${isVisible
-                          ? "border-black/20 bg-black text-white scale-[1.02] shadow-md dark:border-white/20 dark:bg-white dark:text-black"
-                          : "border-black/10 bg-white/70 hover:scale-[1.01] hover:border-black/20 dark:border-white/10 dark:bg-white/5 dark:hover:border-white/20"
-                        }`}
+                      className={`animate-list-item flex items-center gap-3 p-3 text-left transition-all duration-300 border-b border-black/10 dark:border-white/10`}
                     >
-                      <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-black/5 text-black/40 dark:bg-white/10 dark:text-white/40">
+                      <div className="relative flex h-12 w-12 shrink-0 items-center justify-center bg-black/5 text-black/40 dark:bg-white/10 dark:text-white/40">
                         {track.cover ? (
-                          <img src={track.cover} alt={`${track.title} cover`} className="h-full w-full rounded-xl object-cover" />
+                          <img src={track.cover} alt={`${track.title} cover`} className="h-full w-full object-cover" />
                         ) : (
                           <Music2 size={18} />
                         )}
                         {isCurrentlyPlaying && (
-                          <span className="absolute inset-0 rounded-xl animate-pulse-ring" />
+                          <span className="absolute inset-0 animate-pulse-ring" />
                         )}
                       </div>
                       <div className="min-w-0 flex-1">

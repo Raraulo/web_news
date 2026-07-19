@@ -151,7 +151,7 @@ function BentoCard({ article, span = "small", index }: BentoCardProps) {
           style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
         >
           <a
-            href={`#${article.id}`}
+            href={article.id}
             target="_blank"
             rel="noopener noreferrer"
             className="line-clamp-3 group-hover:underline decoration-black/20 dark:decoration-white/20 decoration-1 underline-offset-2 transition-all duration-300"

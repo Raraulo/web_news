@@ -44,13 +44,18 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning className={`${playfair.variable} ${garamond.variable} ${inter.variable}`}>
       <body className="min-h-screen flex flex-col antialiased bg-white dark:bg-black text-black dark:text-white">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
-          <IntroAnimation />
-          <Navbar />
-          <SportsTicker />
-          <main className="flex-1">
-            {children}
-          </main>
-          <Footer />
+          <div className="page-content-wrapper flex flex-col min-h-screen">
+            <IntroAnimation />
+            <Navbar />
+            <SportsTicker />
+            <main className="flex-1 relative">
+              {/* Bordes decorativos con crosshatch solo en el contenido */}
+              <div className="page-border-left" aria-hidden="true" />
+              <div className="page-border-right" aria-hidden="true" />
+              {children}
+            </main>
+            <Footer />
+          </div>
         </ThemeProvider>
       </body>
     </html>

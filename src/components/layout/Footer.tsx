@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function Footer() {
   const year = new Date().getFullYear();
 
@@ -13,7 +15,9 @@ export function Footer() {
     <footer className="border-t-2 border-black dark:border-white/20 bg-white dark:bg-black mt-auto font-serif text-black dark:text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="flex flex-col items-center text-center mb-10">
-          <span className="text-3xl font-black tracking-tight">The Quito Grid</span>
+          <Link href="/" className="inline-block hover:opacity-80 transition-opacity">
+            <span className="text-3xl font-black tracking-tight">The Quito Grid</span>
+          </Link>
           <span className="font-sans text-[11px] uppercase tracking-[0.25em] text-black/50 dark:text-white/50 mt-2">
             Informacion con criterio, desde {year}
           </span>

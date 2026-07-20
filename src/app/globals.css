@@ -16,8 +16,13 @@
 }
 
 @keyframes ticker {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 :root {
@@ -45,10 +50,111 @@ body {
 }
 
 /* Clases utilitarias para las fuentes */
-.font-serif  { font-family: var(--font-serif), Georgia, serif; }
-.font-body   { font-family: var(--font-body),  Georgia, serif; }
-.font-sans   { font-family: var(--font-sans),  system-ui, sans-serif; }
+.font-serif {
+  font-family: var(--font-serif), Georgia, serif;
+}
+
+.font-body {
+  font-family: var(--font-body), Georgia, serif;
+}
+
+.font-sans {
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
 
 /* Scrollbar oculto para ticker */
-.hide-scrollbar::-webkit-scrollbar { display: none; }
-.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ─── Bordes decorativos con líneas diagonales (crosshatch sutil) ─── */
+.page-border-left,
+.page-border-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 38px;
+  z-index: 10;
+  pointer-events: none;
+  /* Patrón de líneas diagonales sutiles */
+  background-image: repeating-linear-gradient(45deg,
+      transparent,
+      transparent 5px,
+      rgba(0, 0, 0, 0.06) 5px,
+      rgba(0, 0, 0, 0.06) 6px),
+    repeating-linear-gradient(-45deg,
+      transparent,
+      transparent 5px,
+      rgba(0, 0, 0, 0.06) 5px,
+      rgba(0, 0, 0, 0.06) 6px);
+}
+
+.page-border-left {
+  left: -46px; /* 54px (padding) - 46px = 8px (0.5rem) from window edge */
+}
+
+.page-border-right {
+  right: -46px;
+}
+
+/* Dark mode: líneas más claras */
+.dark .page-border-left,
+.dark .page-border-right {
+  background-image: repeating-linear-gradient(45deg,
+      transparent,
+      transparent 5px,
+      rgba(255, 255, 255, 0.05) 5px,
+      rgba(255, 255, 255, 0.05) 6px),
+    repeating-linear-gradient(-45deg,
+      transparent,
+      transparent 5px,
+      rgba(255, 255, 255, 0.05) 5px,
+      rgba(255, 255, 255, 0.05) 6px);
+}
+
+/* ─── Contenedor con más respiración ─── */
+.page-content-wrapper {
+  padding-left: 54px;
+  padding-right: 54px;
+}
+
+@media (max-width: 768px) {
+  .page-border-left {
+    left: -28px; /* 36px (padding) - 28px = 8px (0.5rem) from edge */
+  }
+  .page-border-right {
+    right: -28px;
+  }
+  .page-border-left,
+  .page-border-right {
+    width: 20px;
+  }
+
+  .page-content-wrapper {
+    padding-left: 36px;
+    padding-right: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-border-left {
+    left: -16px; /* 24px (padding) - 16px = 8px (0.5rem) from edge */
+  }
+  .page-border-right {
+    right: -16px;
+  }
+  .page-border-left,
+  .page-border-right {
+    width: 12px;
+  }
+
+  .page-content-wrapper {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}

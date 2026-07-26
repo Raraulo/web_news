@@ -1,6 +1,6 @@
 import { NewsArticle } from "@/components/ui/NewsCard";
 
-const API_KEY = "pub_25e3612e97354c12bd1e2c6a39c35478";
+const API_KEY = "pub_6ae64b7c3d9840c4a6d0958642d4bbcc";
 
 /**
  * Fuentes permitidas.

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const TWELVEDATA_API_KEY = "a51aee1834d841a8a150435b15045c55";
+const TWELVEDATA_API_KEY = process.env.TWELVEDATA_API_KEY || "a51aee1834d841a8a150435b15045c55";
 
 // Lista blanca: solo estos símbolos pueden consultarse. Evita que alguien
 // pegue /api/stocks?symbol=LOQUESEA y gaste tu cuota diaria de Twelve Data.

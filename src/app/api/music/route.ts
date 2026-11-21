@@ -13,16 +13,16 @@ interface DeezerTrack {
 // Buscamos cada canción por nombre real en Deezer para traer su carátula
 // y preview de audio verdaderos, en vez de placeholders.
 const SEARCH_QUERIES = [
-  "Dai Dai Shakira, Burna Boy",
-  "Billie Jean Michael Jackson",
-  "hate that i made you love me Ariana Grande",
-  "Wonderwall Oasis ",
-  "Espresso Sabrina Carpenter",
-  "Cruel Summer Taylor Swift",
-  "Fuerza Regida Tqm",
   "Python GOT7",
-  "Encantadora Yandel",
-  "DtMF Bad Bunny",
+  "Bad Michael Jackson",
+  "Caperuza Fuerza Regida",
+  "Hold the Line Toto",
+  "dead in your arms nightcore",
+  "Acurrucar Ed Maverick",
+  "Mamichula Trueno",
+  "Mi Religion Jesse & Joy",
+  "Devil Town Cavetown",
+  "Less Than Zero The Weeknd",
 ];
 
 async function searchTrack(query: string, position: number): Promise<DeezerTrack | null> {
